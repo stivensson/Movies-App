@@ -1,41 +1,40 @@
 export default class MoviesApi {
-  _apiBase = 'https://api.themoviedb.org/3/'
-  _apiKey = '&api_key=3fdae1fc8a70746b361718a81549b033'
+  apiBase = 'https://api.themoviedb.org/3/'
+  apiKey = 'api_key=3fdae1fc8a70746b361718a81549b033'
 
   async getResource(url) {
-    const res = await fetch(`${this._apiBase}${url}${this._apiKey}`)
+    const res = await fetch(`${this.apiBase}${url}${this.apiKey}`)
 
     if (!res.ok) {
-      throw new Error(`Could not fetch ${this._apiBase}${url}` + `, received ${res.status}`)
+      throw new Error(`Could not fetch ${this.apiBase}${url}` + `, received ${res.status}`)
     }
 
     return await res.json()
   }
 
-  async getMovies(search) {
-    const res = await this.getResource(`search/movie?query=${search}`)
-    return res.results
+  async searchMovies(search, page) {
+    const res = await this.getResource(`search/movie?query=${search}&page=${page}&`)
+    return res.results.map(this.transformData)
   }
 
-  // getPerson(id) {
-  //   return this.getResource(`people/${id}/`)
-  // }
+  async defaultMovies(page) {
+    const res = await this.getResource(`movie/popular?page=${page}&`)
+    return res.results.map(this.transformData)
+  }
 
-  // async getAllStarships() {
-  //   const res = await this.getResource('starships/')
-  //   return res.results
-  // }
+  async genresMovies() {
+    const res = await this.getResource('genre/movie/list?')
+    return res.genres
+  }
 
-  // getStarship(id) {
-  //   return this.getResource(`starships/${id}/`)
-  // }
-
-  // async getAllPlanets() {
-  //   const res = await this.getResource('planets/')
-  //   return res.results
-  // }
-
-  // getPlanet(id) {
-  //   return this.getResource(`planets/${id}/`)
-  // }
+  transformData(movies) {
+    return {
+      id: movies.id,
+      poster: movies.poster_path,
+      title: movies.title,
+      date: movies.release_date,
+      genre: movies.genre_ids,
+      overview: movies.overview,
+    }
+  }
 }

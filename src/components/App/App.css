@@ -6,11 +6,20 @@ body {
 }
 
 body {
-  padding: 0 200px;
+  padding: 0 300px;
   background-color: #f4f4f4;
 }
 
 #root {
   background-color: #fff;
   padding: 0 48px;
+}
+
+.pagination {
+  position: sticky;
+  bottom: 0;
+  padding: 20px 0 20px 0;
+  margin-top: 20px;
+  text-align: center;
+  background-color: #fff;
 }

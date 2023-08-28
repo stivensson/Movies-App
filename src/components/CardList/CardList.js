@@ -1,47 +1,38 @@
-import React, { Component } from 'react'
-import { Col, Row } from 'antd'
+import React from 'react'
+import { Col, Row, Spin, FloatButton } from 'antd'
 
 import './CardList.css'
 
-import Cards from '../Cards/Cards'
-import MoviesApi from '../../services/MoviesApi'
+import Cards from '../Cards'
+import { MoviesApiConsumer } from '../MoviesApiContext'
 
-export default class CardList extends Component {
-  constructor() {
-    super(), this.searchMovies()
-  }
-
-  state = {
-    cardData: [],
-  }
-
-  moviesApi = new MoviesApi()
-
-  searchMovies() {
-    const search = 'return'
-    this.moviesApi.getMovies(search).then((movies) => {
-      this.setState({
-        cardData: movies,
-      })
-    })
-  }
-
-  render() {
-    return (
-      <Row gutter={[48, 48]}>
-        {this.state.cardData &&
-          this.state.cardData.map((item) => (
-            <Col span={12} key={item.id}>
-              <Cards
-                poster={item.poster_path}
-                title={item.title}
-                date={item.release_date}
-                genre={item.genre_ids}
-                overview={item.overview}
-              />
-            </Col>
-          ))}
-      </Row>
-    )
-  }
+const CardList = () => {
+  return (
+    <MoviesApiConsumer>
+      {({ moviesData, loading }) => {
+        return (
+          <>
+            <Row gutter={[48, 48]}>
+              {moviesData.map((item) => (
+                <Col span={12} key={item.id}>
+                  <Spin spinning={loading} tip="Загрузка..." size="large">
+                    <Cards
+                      poster={item.poster}
+                      title={item.title}
+                      date={item.date}
+                      genre={item.genre}
+                      overview={item.overview}
+                    />
+                  </Spin>
+                </Col>
+              ))}
+            </Row>
+            <FloatButton.BackTop style={{ right: 250 }} />
+          </>
+        )
+      }}
+    </MoviesApiConsumer>
+  )
 }
+
+export default CardList
