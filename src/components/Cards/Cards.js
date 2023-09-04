@@ -1,6 +1,6 @@
 import React from 'react'
 import { format } from 'date-fns'
-import { Button, Card, List, Avatar, Rate } from 'antd'
+import { Button, Card, List, Rate, Avatar } from 'antd'
 
 import no_poster from './no_poster.svg'
 import './Cards.css'
@@ -24,11 +24,11 @@ const Cards = ({
   moviesId,
   guestId,
 }) => {
-  const abc = []
+  const genreList = []
   if (genre)
     genre.forEach((item) => {
       genreData.forEach((el) => {
-        if (item === el.id) abc.push(el.name)
+        if (item === el.id) genreList.push(el.name)
       })
     })
 
@@ -39,8 +39,6 @@ const Cards = ({
 
     return '#66E900'
   }
-
-  console.log(poster)
 
   const onChangeRating = (e) => {
     if (moviesId && guestId) changeRating(moviesId, guestId, e)
@@ -60,7 +58,7 @@ const Cards = ({
     >
       <List size="small" split={false}>
         <div className="card-title">
-          <List.Item style={{ fontSize: 22, fontWeight: 500, padding: '0 0 10px 0', maxWidth: 220 }}>
+          <List.Item style={{ fontSize: 22, fontWeight: 500, padding: '0 0 10px 0' }}>
             {title.split(' ').length > 6 ? shortText(title, 5) : title}
           </List.Item>
           <Avatar
@@ -69,28 +67,28 @@ const Cards = ({
               backgroundColor: 'white',
               color: 'black',
               border: `3px solid ${colorRating(allRating)}`,
-              margin: '5px 5px 0 0',
-              padding: 0,
+              padding: 15,
               fontSize: 14,
               fontWeight: 500,
               display: 'flex',
               alignItems: 'center',
+              margin: '5px 5px 0 5px',
             }}
           >
-            {allRating}
+            {allRating.toFixed(1)}
           </Avatar>
         </div>
         <List.Item style={{ fontSize: 16, padding: 0, paddingBottom: 10 }}>
           <Meta description={date ? format(new Date(date), 'MMMM dd, yyyy') : 'No date...'} />
         </List.Item>
         <List.Item style={{ justifyContent: 'flex-start', padding: 0, paddingBottom: 10 }}>
-          {abc.slice(0, 2).map((item) => (
+          {genreList.slice(0, 2).map((item) => (
             <Button style={{ width: 'auto', fontSize: 14, marginRight: 10 }} disabled key={item}>
               {item}
             </Button>
           ))}
         </List.Item>
-        <List.Item style={{ fontSize: 16, fontWeight: 500, padding: '0 5px 0 0' }}>
+        <List.Item style={{ fontSize: 16, fontWeight: 500, padding: '0 5px 0 0', lineHeight: 1.2 }}>
           {overview.split(' ').length > 20 ? shortText(overview, 19) : !overview ? 'No review...' : overview}
         </List.Item>
       </List>

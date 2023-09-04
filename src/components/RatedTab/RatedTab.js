@@ -1,12 +1,12 @@
 import React from 'react'
 import { Col, Row, Spin, FloatButton } from 'antd'
 
-import './RatingList.css'
+import './RatedTab.css'
 
 import Cards from '../Cards'
 import { MoviesApiConsumer } from '../MoviesApiContext'
 
-const RatingList = ({ changeRating }) => {
+const RatedTab = ({ changeRating }) => {
   return (
     <MoviesApiConsumer>
       {({ ratingData, loading, genreData, guestId }) => {
@@ -41,4 +41,4 @@ const RatingList = ({ changeRating }) => {
   )
 }
 
-export default RatingList
+export default RatedTab

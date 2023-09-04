@@ -5,7 +5,7 @@ import { Tabs } from 'antd'
 import './App.css'
 
 import SearchTab from '../SearchTab'
-import RatingList from '../RatingList'
+import RatedTab from '../RatedTab'
 import { MoviesApiProvider } from '../MoviesApiContext'
 import MoviesApi from '../../services/MoviesApi'
 
@@ -103,7 +103,7 @@ export default class App extends Component {
       {
         key: 2,
         label: 'Rated',
-        children: <RatingList changeRating={this.changeRating} />,
+        children: <RatedTab changeRating={this.changeRating} />,
       },
     ]
 

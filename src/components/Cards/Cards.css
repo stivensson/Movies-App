@@ -1,5 +1,6 @@
 .ant-card-body {
   padding: 0 0 0 20px !important;
+  width: 100%;
 }
 .card-title {
   display: flex;
