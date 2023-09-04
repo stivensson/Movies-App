@@ -1,7 +1,7 @@
 .ant-card-body {
   padding: 0 0 0 20px !important;
 }
- .card-title {
+.card-title {
   display: flex;
   justify-content: space-between;
- }
+}
