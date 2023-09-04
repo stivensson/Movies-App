@@ -8,11 +8,11 @@ import { MoviesApiConsumer } from '../MoviesApiContext'
 const GenreList = () => {
   return (
     <MoviesApiConsumer>
-      {({ genreData }) => {
+      {({ genreData, search }) => {
         return (
           <div className="genre-list">
             <Row gutter={[16, 8]} justify="space-evenly">
-              {genreData &&
+              {!search &&
                 genreData.map((item) => (
                   <Col span={3} key={item.id}>
                     <Button style={{ width: 120 }}>{item.name}</Button>

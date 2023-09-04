@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import { Pagination, Input } from 'antd'
 import { debounce } from 'lodash'
+import { Tabs } from 'antd'
 
 import './App.css'
 
-import CardList from '../CardList'
-import GenreList from '../GenreList'
+import SearchTab from '../SearchTab'
+import RatingList from '../RatingList'
 import { MoviesApiProvider } from '../MoviesApiContext'
 import MoviesApi from '../../services/MoviesApi'
 
@@ -20,29 +20,26 @@ export default class App extends Component {
     page: 1,
     search: '',
     genreData: [],
+    guestId: localStorage.getItem('guestIdMoviesApi'),
+    ratingData: [],
   }
 
   moviesApi = new MoviesApi()
 
-  showMovies = (moviesData) => {
-    this.setState({
-      moviesData,
-      loading: false,
-      genreData: [],
-    })
-  }
-
-  getGenre() {
+  getGenre = () => {
     this.moviesApi.genresMovies().then((genreData) => {
       this.setState({ genreData })
     })
   }
 
-  getMovies(page = this.state.page) {
+  getMovies = (page = this.state.page) => {
     const search = this.state.search
+    this.getGenre()
+    this.getGuestId()
+
     search
       ? this.moviesApi.searchMovies(search, page).then(this.showMovies)
-      : this.moviesApi.defaultMovies(page).then(this.showMovies) && this.getGenre()
+      : this.moviesApi.defaultMovies(page).then(this.showMovies)
   }
 
   getPages = (e) => {
@@ -53,40 +50,68 @@ export default class App extends Component {
     })
   }
 
-  debounceFn = debounce(this.getMovies, 500)
+  getGuestId = () => {
+    !localStorage.getItem('guestIdMoviesApi') &&
+      this.moviesApi.guestSession().then((guestId) => {
+        localStorage.setItem('guestIdMoviesApi', guestId)
+      })
+  }
+
+  showMovies = (moviesData) => {
+    this.moviesApi.getRating(this.state.guestId).then((ratingData) => {
+      this.setState(() => {
+        moviesData.forEach((item) => {
+          ratingData.forEach((el) => {
+            if (item.id === el.id) item.rating = el.rating
+          })
+        })
+
+        return {
+          moviesData: moviesData,
+          ratingData: ratingData,
+          loading: false,
+        }
+      })
+    })
+  }
+
+  debounceSearch = debounce(this.getMovies, 500)
+  debounceRating = debounce(this.getMovies, 2000)
+
+  changeRating = (moviesId, guestId, body) => {
+    body >= 0.5 && this.moviesApi.addRating(moviesId, guestId, body).then(setTimeout(this.getMovies, 2000))
+    body < 0.5 && this.moviesApi.deleteRating(moviesId, guestId).then(setTimeout(this.getMovies, 2000))
+  }
 
   onInputText = (e) => {
     this.setState({
       search: e.target.value.trimStart(),
     })
-    this.debounceFn()
+    this.debounceSearch()
     this.setState({
       page: 1,
     })
   }
 
   render() {
+    const tabItems = [
+      {
+        key: 1,
+        label: 'Search',
+        children: <SearchTab inputText={this.onInputText} getPages={this.getPages} changeRating={this.changeRating} />,
+      },
+      {
+        key: 2,
+        label: 'Rated',
+        children: <RatingList changeRating={this.changeRating} />,
+      },
+    ]
+
     return (
       <MoviesApiProvider value={this.state}>
-        <section>
-          <Input
-            style={{ marginBottom: 20 }}
-            placeholder="Type to search..."
-            value={this.state.search}
-            onChange={this.onInputText}
-          />
-          <GenreList />
-          <CardList />
-          <div className="pagination">
-            <Pagination
-              showSizeChanger={false}
-              defaultCurrent={1}
-              current={this.state.page}
-              total={100}
-              onChange={this.getPages}
-            />
-          </div>
-        </section>
+        <>
+          <Tabs destroyInactiveTabPane centered items={tabItems} />
+        </>
       </MoviesApiProvider>
     )
   }

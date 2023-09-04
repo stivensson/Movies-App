@@ -1,19 +1,19 @@
 import React from 'react'
 import { Col, Row, Spin, FloatButton } from 'antd'
 
-import './CardList.css'
+import './RatingList.css'
 
 import Cards from '../Cards'
 import { MoviesApiConsumer } from '../MoviesApiContext'
 
-const CardList = ({ changeRating }) => {
+const RatingList = ({ changeRating }) => {
   return (
     <MoviesApiConsumer>
-      {({ moviesData, loading, genreData, guestId }) => {
+      {({ ratingData, loading, genreData, guestId }) => {
         return (
           <>
             <Row gutter={[48, 48]}>
-              {moviesData.map((item) => (
+              {ratingData.map((item) => (
                 <Col span={12} key={item.id}>
                   <Spin spinning={loading} tip="Загрузка..." size="large">
                     <Cards
@@ -41,4 +41,4 @@ const CardList = ({ changeRating }) => {
   )
 }
 
-export default CardList
+export default RatingList

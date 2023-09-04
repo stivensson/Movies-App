@@ -2,7 +2,7 @@ export default class MoviesApi {
   apiBase = 'https://api.themoviedb.org/3/'
   apiKey = 'api_key=3fdae1fc8a70746b361718a81549b033'
 
-  async getResource(url) {
+  async resource(url) {
     const res = await fetch(`${this.apiBase}${url}${this.apiKey}`)
 
     if (!res.ok) {
@@ -12,19 +12,43 @@ export default class MoviesApi {
     return await res.json()
   }
 
+  async addRating(moviesId, guestId, body) {
+    await fetch(`${this.apiBase}movie/${moviesId}/rating?guest_session_id=${guestId}&${this.apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ value: body }),
+    })
+  }
+
+  async deleteRating(moviesId, guestId) {
+    await fetch(`${this.apiBase}movie/${moviesId}/rating?guest_session_id=${guestId}&${this.apiKey}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async getRating(guestId) {
+    const res = await this.resource(`guest_session/${guestId}/rated/movies?`)
+    return res.results.map(this.transformData)
+  }
+
   async searchMovies(search, page) {
-    const res = await this.getResource(`search/movie?query=${search}&page=${page}&`)
+    const res = await this.resource(`search/movie?query=${search}&page=${page}&`)
     return res.results.map(this.transformData)
   }
 
   async defaultMovies(page) {
-    const res = await this.getResource(`movie/popular?page=${page}&`)
+    const res = await this.resource(`movie/popular?page=${page}&`)
     return res.results.map(this.transformData)
   }
 
   async genresMovies() {
-    const res = await this.getResource('genre/movie/list?')
+    const res = await this.resource('genre/movie/list?')
     return res.genres
+  }
+
+  async guestSession() {
+    const res = await this.resource('authentication/guest_session/new?')
+    return res.guest_session_id
   }
 
   transformData(movies) {
@@ -35,6 +59,8 @@ export default class MoviesApi {
       date: movies.release_date,
       genre: movies.genre_ids,
       overview: movies.overview,
+      allRating: movies.vote_average,
+      rating: movies.rating,
     }
   }
 }
