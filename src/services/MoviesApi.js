@@ -31,14 +31,29 @@ export default class MoviesApi {
     return res.results.map(this.transformData)
   }
 
+  async totalRating(guestId) {
+    const res = await this.resource(`guest_session/${guestId}/rated/movies?`)
+    return res.total_pages
+  }
+
   async searchMovies(search, page) {
     const res = await this.resource(`search/movie?query=${search}&page=${page}&`)
     return res.results.map(this.transformData)
   }
 
+  async totalSearchMovies(search) {
+    const res = await this.resource(`search/movie?query=${search}&`)
+    return res.total_pages
+  }
+
   async defaultMovies(page) {
     const res = await this.resource(`movie/popular?page=${page}&`)
     return res.results.map(this.transformData)
+  }
+
+  async totalDefaultMovies() {
+    const res = await this.resource('movie/popular?')
+    return res.total_pages
   }
 
   async genresMovies() {

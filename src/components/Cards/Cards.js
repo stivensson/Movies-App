@@ -47,12 +47,12 @@ const Cards = ({
   return (
     <Card
       hoverable
-      style={{ minWidth: 200, height: 300, display: 'flex', borderRadius: 0 }}
+      style={{ minWidth: 500, height: 300, display: 'flex', borderRadius: 0 }}
       cover={
         <img
-          alt="poster"
-          src={poster === null ? no_poster : `https://image.tmdb.org/t/p/w300${poster}`}
-          style={{ width: 200, height: 300, borderRadius: 0 }}
+          alt={`poster - ${title}`}
+          src={!poster ? no_poster : `https://image.tmdb.org/t/p/w300${poster}`}
+          style={{ width: 200, height: '100%', borderRadius: 0 }}
         />
       }
     >

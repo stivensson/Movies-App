@@ -1,0 +1,39 @@
+import React from 'react'
+import { Spin } from 'antd'
+
+import './CardList.css'
+
+import Cards from '../Cards'
+import { MoviesApiConsumer } from '../MoviesApiContext'
+
+const CardList = ({ changeRating, data }) => {
+  return (
+    <MoviesApiConsumer>
+      {({ loading, genreData, guestId }) => {
+        return (
+          <div className="card-list">
+            {data.map((item) => (
+              <Spin spinning={loading} tip="Загрузка..." size="large" key={item.id}>
+                <Cards
+                  poster={item.poster}
+                  title={item.title}
+                  date={item.date}
+                  genre={item.genre}
+                  overview={item.overview}
+                  genreData={genreData}
+                  allRating={item.allRating}
+                  rating={item.rating}
+                  changeRating={changeRating}
+                  moviesId={item.id}
+                  guestId={guestId}
+                />
+              </Spin>
+            ))}
+          </div>
+        )
+      }}
+    </MoviesApiConsumer>
+  )
+}
+
+export default CardList

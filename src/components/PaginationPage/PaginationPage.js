@@ -5,13 +5,20 @@ import './PaginationPage.css'
 
 import { MoviesApiConsumer } from '../MoviesApiContext'
 
-const PaginationPage = ({ getPages }) => {
+const PaginationPage = ({ getPages, totalPages }) => {
   return (
     <MoviesApiConsumer>
       {({ page }) => {
         return (
           <div className="pagination">
-            <Pagination showSizeChanger={false} defaultCurrent={1} current={page} total={100} onChange={getPages} />
+            <Pagination
+              showSizeChanger={false}
+              defaultCurrent={1}
+              current={page}
+              total={totalPages}
+              defaultPageSize={1}
+              onChange={getPages}
+            />
           </div>
         )
       }}
