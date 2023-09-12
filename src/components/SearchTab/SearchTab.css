@@ -3,3 +3,15 @@
     display: none;
   }
 }
+
+.alert-error {
+  width: 500px;
+  left: 50%;
+  margin-left: -250px;
+  position: absolute;
+  z-index: 2;
+}
+
+.alert-error__hidden {
+  display: none;
+}

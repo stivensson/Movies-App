@@ -15,13 +15,13 @@ const CardList = ({ changeRating, data }) => {
             {data.map((item) => (
               <Spin spinning={loading} tip="Загрузка..." size="large" key={item.id}>
                 <Cards
-                  poster={item.poster}
+                  poster={item.poster_path}
                   title={item.title}
-                  date={item.date}
-                  genre={item.genre}
+                  date={item.release_date}
+                  genre={item.genre_ids}
                   overview={item.overview}
                   genreData={genreData}
-                  allRating={item.allRating}
+                  allRating={item.vote_average}
                   rating={item.rating}
                   changeRating={changeRating}
                   moviesId={item.id}

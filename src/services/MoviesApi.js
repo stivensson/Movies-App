@@ -1,19 +1,13 @@
 export default class MoviesApi {
-  apiBase = 'https://api.themoviedb.org/3/'
-  apiKey = 'api_key=3fdae1fc8a70746b361718a81549b033'
-
-  async resource(url) {
-    const res = await fetch(`${this.apiBase}${url}${this.apiKey}`)
-
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${this.apiBase}${url}` + `, received ${res.status}`)
-    }
-
-    return await res.json()
-  }
+  url = new URL('https://api.themoviedb.org')
+  apiKey = '3fdae1fc8a70746b361718a81549b033'
 
   async addRating(moviesId, guestId, body) {
-    await fetch(`${this.apiBase}movie/${moviesId}/rating?guest_session_id=${guestId}&${this.apiKey}`, {
+    const newUrl = new URL(`/3/movie/${moviesId}/rating`, this.url)
+    newUrl.searchParams.set('guest_session_id', guestId)
+    newUrl.searchParams.set('api_key', this.apiKey)
+
+    await fetch(newUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ value: body }),
@@ -21,61 +15,80 @@ export default class MoviesApi {
   }
 
   async deleteRating(moviesId, guestId) {
-    await fetch(`${this.apiBase}movie/${moviesId}/rating?guest_session_id=${guestId}&${this.apiKey}`, {
+    const newUrl = new URL(`/3/movie/${moviesId}/rating`, this.url)
+    newUrl.searchParams.set('guest_session_id', guestId)
+    newUrl.searchParams.set('api_key', this.apiKey)
+
+    await fetch(newUrl, {
       method: 'DELETE',
     })
   }
 
   async getRating(guestId) {
-    const res = await this.resource(`guest_session/${guestId}/rated/movies?`)
-    return res.results.map(this.transformData)
+    const newUrl = new URL(`/3/guest_session/${guestId}/rated/movies`, this.url)
+    newUrl.searchParams.set('api_key', this.apiKey)
+
+    const res = await fetch(newUrl).then((res) => res.json())
+    return res.results
   }
 
   async totalRating(guestId) {
-    const res = await this.resource(`guest_session/${guestId}/rated/movies?`)
+    const newUrl = new URL(`/3/guest_session/${guestId}/rated/movies`, this.url)
+    newUrl.searchParams.set('api_key', this.apiKey)
+
+    const res = await fetch(newUrl).then((res) => res.json())
     return res.total_pages
   }
 
   async searchMovies(search, page) {
-    const res = await this.resource(`search/movie?query=${search}&page=${page}&`)
-    return res.results.map(this.transformData)
+    const newUrl = new URL('/3/search/movie', this.url)
+    newUrl.searchParams.set('query', search)
+    newUrl.searchParams.set('page', page)
+    newUrl.searchParams.set('api_key', this.apiKey)
+
+    const res = await fetch(newUrl).then((res) => res.json())
+    return res.results
   }
 
   async totalSearchMovies(search) {
-    const res = await this.resource(`search/movie?query=${search}&`)
+    const newUrl = new URL('/3/search/movie', this.url)
+    newUrl.searchParams.set('query', search)
+    newUrl.searchParams.set('api_key', this.apiKey)
+
+    const res = await fetch(newUrl).then((res) => res.json())
     return res.total_pages
   }
 
   async defaultMovies(page) {
-    const res = await this.resource(`movie/popular?page=${page}&`)
-    return res.results.map(this.transformData)
+    const newUrl = new URL('/3/movie/popular', this.url)
+    newUrl.searchParams.set('page', page)
+    newUrl.searchParams.set('api_key', this.apiKey)
+
+    const res = await fetch(newUrl).then((res) => res.json())
+    return res.results
   }
 
   async totalDefaultMovies() {
-    const res = await this.resource('movie/popular?')
+    const newUrl = new URL('/3/movie/popular', this.url)
+    newUrl.searchParams.set('api_key', this.apiKey)
+
+    const res = await fetch(newUrl).then((res) => res.json())
     return res.total_pages
   }
 
   async genresMovies() {
-    const res = await this.resource('genre/movie/list?')
+    const newUrl = new URL('/3/genre/movie/list', this.url)
+    newUrl.searchParams.set('api_key', this.apiKey)
+
+    const res = await fetch(newUrl).then((res) => res.json())
     return res.genres
   }
 
   async guestSession() {
-    const res = await this.resource('authentication/guest_session/new?')
-    return res.guest_session_id
-  }
+    const newUrl = new URL('/3/authentication/guest_session/new', this.url)
+    newUrl.searchParams.set('api_key', this.apiKey)
 
-  transformData(movies) {
-    return {
-      id: movies.id,
-      poster: movies.poster_path,
-      title: movies.title,
-      date: movies.release_date,
-      genre: movies.genre_ids,
-      overview: movies.overview,
-      allRating: movies.vote_average,
-      rating: movies.rating,
-    }
+    const res = await fetch(newUrl).then((res) => res.json())
+    return res.guest_session_id
   }
 }

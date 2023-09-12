@@ -1,5 +1,6 @@
 import React from 'react'
 import { Alert } from 'antd'
+import classNames from 'classnames'
 
 import './RatedTab.css'
 import CardList from '../CardList'
@@ -9,9 +10,17 @@ import { MoviesApiConsumer } from '../MoviesApiContext'
 const RatedTab = ({ changeRating, getPages }) => {
   return (
     <MoviesApiConsumer>
-      {({ ratingData, totalRatedPages }) => {
+      {({ ratingData, totalRatedPages, error }) => {
         return (
           <div className="rated-tab">
+            <Alert
+              className={classNames({ 'alert-error': error, 'alert-error__hidden': !error })}
+              type="error"
+              message="Ошибка"
+              description="Попробуйте снова!"
+              closable
+              style={{ textAlign: 'center', fontSize: 18, fontWeight: 500 }}
+            />
             {!ratingData.length && (
               <Alert type="info" message="Нет оценённых фильмов !" style={{ textAlign: 'center' }} />
             )}

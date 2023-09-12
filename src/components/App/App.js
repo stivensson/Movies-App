@@ -23,12 +23,19 @@ export default class App extends Component {
     totalRatedPages: '',
     search: '',
     loading: true,
+    errorConnect: false,
     error: false,
     page: 1,
     guestId: localStorage.getItem('guestIdMoviesApi'),
   }
 
   moviesApi = new MoviesApi()
+
+  onErrorConnect = () => {
+    this.setState({
+      errorConnect: true,
+    })
+  }
 
   onError = () => {
     this.setState({
@@ -70,7 +77,7 @@ export default class App extends Component {
       .then((genreData) => {
         this.setState({ genreData })
       })
-      .catch(this.onError)
+      .catch(this.onErrorConnect)
   }
 
   getMovies = (page = this.state.page) => {
@@ -78,9 +85,15 @@ export default class App extends Component {
     this.getGenre()
     this.getGuestId()
 
-    search
-      ? this.moviesApi.searchMovies(search, page).then(this.showMovies).then(this.getTotalSearchPages)
-      : this.moviesApi.defaultMovies(page).then(this.showMovies).then(this.getTotalDefaultPages).catch(this.onError)
+    if (search) {
+      this.moviesApi.searchMovies(search, page).then(this.showMovies).then(this.getTotalSearchPages).catch(this.onError)
+    } else {
+      this.moviesApi
+        .defaultMovies(page)
+        .then(this.showMovies)
+        .then(this.getTotalDefaultPages)
+        .catch(this.onErrorConnect)
+    }
   }
 
   getPages = (e) => {
@@ -98,7 +111,7 @@ export default class App extends Component {
         .then((guestId) => {
           localStorage.setItem('guestIdMoviesApi', guestId)
         })
-        .catch(this.onError)
+        .catch(this.onErrorConnect)
   }
 
   showMovies = (moviesData) => {
@@ -124,8 +137,10 @@ export default class App extends Component {
   debounceSearch = debounce(this.getMovies, 500)
 
   changeRating = (moviesId, guestId, body) => {
-    body >= 0.5 && this.moviesApi.addRating(moviesId, guestId, body).then(setTimeout(this.getMovies, 2000))
-    body < 0.5 && this.moviesApi.deleteRating(moviesId, guestId).then(setTimeout(this.getMovies, 2000))
+    body >= 0.5 &&
+      this.moviesApi.addRating(moviesId, guestId, body).then(setTimeout(this.getMovies, 2000)).catch(this.onError)
+    body < 0.5 &&
+      this.moviesApi.deleteRating(moviesId, guestId).then(setTimeout(this.getMovies, 2000)).catch(this.onError)
   }
 
   onInputText = (e) => {
@@ -154,7 +169,7 @@ export default class App extends Component {
 
     return (
       <MoviesApiProvider value={this.state}>
-        {this.state.error ? <ErrorMessage /> : <Tabs destroyInactiveTabPane centered items={tabItems} />}
+        {this.state.errorConnect ? <ErrorMessage /> : <Tabs destroyInactiveTabPane centered items={tabItems} />}
       </MoviesApiProvider>
     )
   }
