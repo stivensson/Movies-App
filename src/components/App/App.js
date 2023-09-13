@@ -12,7 +12,8 @@ import MoviesApi from '../../services/MoviesApi'
 
 export default class App extends Component {
   componentDidMount() {
-    this.getMovies()
+    this.getGuestId()
+    this.getGenre()
   }
 
   state = {
@@ -26,7 +27,6 @@ export default class App extends Component {
     errorConnect: false,
     error: false,
     page: 1,
-    guestId: localStorage.getItem('guestIdMoviesApi'),
   }
 
   moviesApi = new MoviesApi()
@@ -63,7 +63,7 @@ export default class App extends Component {
   }
 
   getTotalRatedPages = () => {
-    const guestId = this.state.guestId
+    const guestId = localStorage.getItem('guestIdMoviesApi')
     this.moviesApi.totalRating(guestId).then((res) => {
       this.setState({
         totalRatedPages: res,
@@ -82,8 +82,6 @@ export default class App extends Component {
 
   getMovies = (page = this.state.page) => {
     const search = this.state.search
-    this.getGenre()
-    this.getGuestId()
 
     if (search) {
       this.moviesApi.searchMovies(search, page).then(this.showMovies).then(this.getTotalSearchPages).catch(this.onError)
@@ -104,19 +102,23 @@ export default class App extends Component {
     })
   }
 
-  getGuestId = () => {
+  getGuestId = async () => {
     !localStorage.getItem('guestIdMoviesApi') &&
-      this.moviesApi
+      (await this.moviesApi
         .guestSession()
         .then((guestId) => {
           localStorage.setItem('guestIdMoviesApi', guestId)
         })
-        .catch(this.onErrorConnect)
+        .catch(this.onErrorConnect))
+
+    this.getMovies()
   }
 
   showMovies = (moviesData) => {
+    const guest = localStorage.getItem('guestIdMoviesApi')
+
     this.moviesApi
-      .getRating(this.state.guestId)
+      .getRating(guest)
       .then((ratingData) => {
         moviesData.forEach((item) => {
           ratingData.forEach((el) => {
@@ -136,7 +138,8 @@ export default class App extends Component {
 
   debounceSearch = debounce(this.getMovies, 500)
 
-  changeRating = (moviesId, guestId, body) => {
+  changeRating = (moviesId, body) => {
+    const guestId = localStorage.getItem('guestIdMoviesApi')
     body >= 0.5 &&
       this.moviesApi.addRating(moviesId, guestId, body).then(setTimeout(this.getMovies, 2000)).catch(this.onError)
     body < 0.5 &&

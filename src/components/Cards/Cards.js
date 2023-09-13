@@ -11,19 +11,7 @@ const shortText = (text, number) => {
   return text.split(' ').slice(0, number).join(' ') + ' ...'
 }
 
-const Cards = ({
-  poster,
-  title,
-  date,
-  genre,
-  overview,
-  genreData,
-  allRating,
-  rating,
-  changeRating,
-  moviesId,
-  guestId,
-}) => {
+const Cards = ({ poster, title, date, genre, overview, genreData, allRating, rating, changeRating, moviesId }) => {
   const genreList = []
   if (genre)
     genre.forEach((item) => {
@@ -41,7 +29,7 @@ const Cards = ({
   }
 
   const onChangeRating = (e) => {
-    if (moviesId && guestId) changeRating(moviesId, guestId, e)
+    if (moviesId) changeRating(moviesId, e)
   }
 
   return (

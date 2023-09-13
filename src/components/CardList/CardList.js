@@ -9,7 +9,7 @@ import { MoviesApiConsumer } from '../MoviesApiContext'
 const CardList = ({ changeRating, data }) => {
   return (
     <MoviesApiConsumer>
-      {({ loading, genreData, guestId }) => {
+      {({ loading, genreData }) => {
         return (
           <div className="card-list">
             {data.map((item) => (
@@ -25,7 +25,6 @@ const CardList = ({ changeRating, data }) => {
                   rating={item.rating}
                   changeRating={changeRating}
                   moviesId={item.id}
-                  guestId={guestId}
                 />
               </Spin>
             ))}
