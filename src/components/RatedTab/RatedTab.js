@@ -7,7 +7,7 @@ import CardList from '../CardList'
 import PaginationPage from '../PaginationPage'
 import { MoviesApiConsumer } from '../MoviesApiContext'
 
-const RatedTab = ({ changeRating, getPages }) => {
+const RatedTab = ({ changeRating, getPages, refreshPage }) => {
   return (
     <MoviesApiConsumer>
       {({ ratingData, totalRatedPages, error }) => {
@@ -20,6 +20,7 @@ const RatedTab = ({ changeRating, getPages }) => {
               description="Попробуйте снова!"
               closable
               style={{ textAlign: 'center', fontSize: 18, fontWeight: 500 }}
+              afterClose={refreshPage}
             />
             {!ratingData.length && (
               <Alert type="info" message="Нет оценённых фильмов !" style={{ textAlign: 'center' }} />

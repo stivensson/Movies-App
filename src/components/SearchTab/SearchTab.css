@@ -8,8 +8,9 @@
   width: 500px;
   left: 50%;
   margin-left: -250px;
-  position: absolute;
   z-index: 2;
+  position: fixed;
+  top: 100px;
 }
 
 .alert-error__hidden {

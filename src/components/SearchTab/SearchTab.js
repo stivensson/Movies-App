@@ -10,7 +10,7 @@ import PaginationPage from '../PaginationPage'
 import CardList from '../CardList'
 import { MoviesApiConsumer } from '../MoviesApiContext'
 
-const SearchTab = ({ inputText, getPages, changeRating }) => {
+const SearchTab = ({ inputText, getPages, changeRating, refreshPage }) => {
   return (
     <MoviesApiConsumer>
       {({ moviesData, totalSearchPages, error }) => {
@@ -24,6 +24,7 @@ const SearchTab = ({ inputText, getPages, changeRating }) => {
               description="Попробуйте снова!"
               closable
               style={{ textAlign: 'center', fontSize: 18, fontWeight: 500 }}
+              afterClose={refreshPage}
             />
             <div className="genre-list">
               <GenreList />

@@ -31,6 +31,10 @@ export default class App extends Component {
 
   moviesApi = new MoviesApi()
 
+  refreshPage = () => {
+    window.location.reload()
+  }
+
   onErrorConnect = () => {
     this.setState({
       errorConnect: true,
@@ -44,31 +48,40 @@ export default class App extends Component {
   }
 
   getTotalDefaultPages = () => {
-    this.moviesApi.totalDefaultMovies().then((res) => {
-      if (res > 99) res = 99
-      this.setState({
-        totalSearchPages: res,
+    this.moviesApi
+      .totalDefaultMovies()
+      .then((res) => {
+        if (res > 99) res = 99
+        this.setState({
+          totalSearchPages: res,
+        })
       })
-    })
+      .catch(this.onError)
   }
 
   getTotalSearchPages = () => {
     const search = this.state.search
-    this.moviesApi.totalSearchMovies(search).then((res) => {
-      if (res > 99) res = 99
-      this.setState({
-        totalSearchPages: res,
+    this.moviesApi
+      .totalSearchMovies(search)
+      .then((res) => {
+        if (res > 99) res = 99
+        this.setState({
+          totalSearchPages: res,
+        })
       })
-    })
+      .catch(this.onError)
   }
 
   getTotalRatedPages = () => {
     const guestId = localStorage.getItem('guestIdMoviesApi')
-    this.moviesApi.totalRating(guestId).then((res) => {
-      this.setState({
-        totalRatedPages: res,
+    this.moviesApi
+      .totalRating(guestId)
+      .then((res) => {
+        this.setState({
+          totalRatedPages: res,
+        })
       })
-    })
+      .catch(this.onError)
   }
 
   getGenre = () => {
@@ -161,12 +174,19 @@ export default class App extends Component {
       {
         key: 1,
         label: 'Search',
-        children: <SearchTab inputText={this.onInputText} getPages={this.getPages} changeRating={this.changeRating} />,
+        children: (
+          <SearchTab
+            inputText={this.onInputText}
+            getPages={this.getPages}
+            changeRating={this.changeRating}
+            refreshPage={this.refreshPage}
+          />
+        ),
       },
       {
         key: 2,
         label: 'Rated',
-        children: <RatedTab changeRating={this.changeRating} getPages={this.getPages} />,
+        children: <RatedTab changeRating={this.changeRating} getPages={this.getPages} refreshPage={this.refreshPage} />,
       },
     ]
 
