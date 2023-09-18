@@ -23,7 +23,7 @@ export default class MoviesApi {
   }
 
   async deleteRating(moviesId, guestId) {
-    const newUrl = new URL(`/3/movie/${moviesId}/rating`, this.url)
+    const newUrl = new URL(`//movie/${moviesId}/rating`, this.url)
     newUrl.searchParams.set('guest_session_id', guestId)
     newUrl.searchParams.set('api_key', this.apiKey)
 

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Alert } from 'antd'
-import classNames from 'classnames'
 
 import './RatedTab.css'
 import CardList from '../CardList'
@@ -13,15 +12,17 @@ const RatedTab = ({ changeRating, getPages, refreshPage }) => {
       {({ ratingData, totalRatedPages, error }) => {
         return (
           <div className="rated-tab">
-            <Alert
-              className={classNames({ 'alert-error': error, 'alert-error__hidden': !error })}
-              type="error"
-              message="Ошибка"
-              description="Попробуйте снова!"
-              closable
-              style={{ textAlign: 'center', fontSize: 18, fontWeight: 500 }}
-              afterClose={refreshPage}
-            />
+            {error ? (
+              <Alert
+                className="alert-error"
+                type="error"
+                message="Ошибка"
+                description="Попробуйте снова!"
+                closable
+                style={{ textAlign: 'center', fontSize: 18, fontWeight: 500 }}
+                afterClose={refreshPage}
+              />
+            ) : null}
             {!ratingData.length && (
               <Alert type="info" message="Нет оценённых фильмов !" style={{ textAlign: 'center' }} />
             )}

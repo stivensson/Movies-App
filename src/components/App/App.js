@@ -32,7 +32,12 @@ export default class App extends Component {
   moviesApi = new MoviesApi()
 
   refreshPage = () => {
-    window.location.reload()
+    this.moviesApi
+      .defaultMovies(this.state.page)
+      .then(this.showMovies)
+      .then(this.getTotalDefaultPages)
+      .then(this.setState({ error: false }))
+      .catch(this.onErrorConnect)
   }
 
   onErrorConnect = () => {
